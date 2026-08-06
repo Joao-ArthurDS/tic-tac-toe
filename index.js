@@ -14,10 +14,37 @@ const ticTacToe = (() => {
     };
 
     const checkWin = (player) => {
+        let win = false;
+        const checkBoard = getBoard();
+        for(let i = 0; i<=2; i++){
+            if(checkBoard[i][0] === player.marker && 
+                checkBoard[i][1] === player.marker && 
+                checkBoard[i][2] === player.marker){//check if the row wins
+                win = true;
+                break;
+            };
+
+            if(checkBoard[0][i] === player.marker && 
+                checkBoard[1][i] === player.marker && 
+                checkBoard[2][i] === player.marker){ //check if column wins
+                win = true;
+                break;
+            };           
+        };
         
-        player.score++;
-        const win = player.score === 3 ? true : false;
-        return console.log(player.name);
+        if((checkBoard[0][0] === player.marker && 
+            checkBoard[1][1] === player.marker && 
+            checkBoard[2][2] === player.marker) ||
+            (checkBoard[0][2] === player.marker && 
+            checkBoard[1][1] === player.marker && 
+            checkBoard[2][0] === player.marker)){ //check diagonals
+            win = true;
+        };
+
+        player.score = win ? player.score++ : player.score;
+        const winGame = player.score === 3 ? true : false;
+        if (win){
+        return console.log(player.name);}
     };
 
     const getBoard = () => {
@@ -51,7 +78,7 @@ const ticTacToe = (() => {
         return turn;
     }
 
-    return { newGame, winner, getBoard, updateBoard, setTurn, getTurn }
+    return { newGame, checkWin, getBoard, updateBoard, setTurn, getTurn }
 })();
 
 function createPlayer(name, marker){
@@ -66,6 +93,7 @@ function startGame(player1name, player2name){
 function makePlay(position){
     const player = ticTacToe.getTurn();
     ticTacToe.updateBoard(player,position[0],position[1]);
+    ticTacToe.checkWin(player);
     ticTacToe.setTurn();
 };
 
