@@ -1,3 +1,9 @@
+const ng_button = document.getElementById('ng_btn');
+ng_button.addEventListener('click',startNewGame);
+
+const game_cells = document.querySelectorAll('[data-id]');
+game_cells.forEach((cell) => cell.addEventListener('click',selectCell));
+
 const ticTacToe = (() => {
     let board;
     let turn;
@@ -9,9 +15,13 @@ const ticTacToe = (() => {
         player1 = createPlayer(p1,1);
         player2 = createPlayer(p2,2);
         turn = player1;
+        newRound();
+    };
+
+    const newRound = ()=>{
         board = [[0,0,0],[0,0,0],[0,0,0]];
         return board;
-    };
+    }
 
     const checkWin = (player) => {
         let win = false;
@@ -43,6 +53,9 @@ const ticTacToe = (() => {
 
         player.score = win ? player.score++ : player.score;
         const winGame = player.score === 3 ? true : false;
+        if(winGame){
+            console.log(`${player.name} wins, click start a new game`)
+        }
         if (win){
         return console.log(player.name);}
     };
@@ -78,7 +91,7 @@ const ticTacToe = (() => {
         return turn;
     }
 
-    return { newGame, checkWin, getBoard, updateBoard, setTurn, getTurn }
+    return { newGame, newRound, checkWin, getBoard, updateBoard, setTurn, getTurn }
 })();
 
 function createPlayer(name, marker){
@@ -97,3 +110,14 @@ function makePlay(position){
     ticTacToe.setTurn();
 };
 
+function selectCell(e){
+    const selected_cell = e.currentTarget.dataset.id;
+    makePlay(selected_cell.split(''));
+
+};
+
+function startNewGame(e){
+    const p1Name = document.getElementById('player1_name');
+    const p2Name = document.getElementById('player2_name');
+    startGame(p1Name.value,p2Name.value);
+};
