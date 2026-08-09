@@ -17,7 +17,7 @@ body{
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
     background-color: rgb(255, 198, 177);
     background: linear-gradient(180deg, rgba(194, 166, 155,1)82%, rgba(119,136,153,1)92%);
     input{
@@ -35,6 +35,18 @@ body{
     justify-content: center;
     align-content: center;
     display: flex;
+    flex-direction: row;
+    p{
+        font-size: 100px;
+        width: 30%;
+        text-align: center;
+        &:first-of-type{
+            color: red;
+        }
+        &:last-of-type{
+            color: blue;
+        }
+    }
 }
 
 #game_board{
@@ -44,10 +56,15 @@ body{
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     div{
+        display: flex;
+        flex-wrap: wrap;
         width: auto;
         height: auto;
         border-left: var(--game-border);
         border-bottom: var(--game-border);
+        justify-content: center;
+        align-content: center;
+        font-size: 80px;
         &:nth-child(1),&:nth-child(4),&:nth-child(7){
             border-left: none;
         }

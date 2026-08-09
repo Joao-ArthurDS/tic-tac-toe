@@ -4,6 +4,12 @@ ng_button.addEventListener('click',startNewGame);
 const game_cells = document.querySelectorAll('[data-id]');
 game_cells.forEach((cell) => cell.addEventListener('click',selectCell));
 
+const input_names = document.querySelectorAll('input');
+
+const game_div = document.getElementById('game_div');
+game_div.style.display = 'none';
+
+
 const ticTacToe = (() => {
     let board;
     let turn;
@@ -13,19 +19,26 @@ const ticTacToe = (() => {
 
     const newGame = (p1,p2) => {
         player1 = createPlayer(p1,1);
+        document.getElementById('score_p1').setAttribute('id',`score_${player1.name}`);
+
         player2 = createPlayer(p2,2);
+        document.getElementById('score_p2').setAttribute('id',`score_${player2.name}`);
+
         turn = player1;
+        game_div.style.display = 'flex';
         newRound();
     };
 
     const newRound = ()=>{
         board = [[0,0,0],[0,0,0],[0,0,0]];
+        game_cells.forEach((cell) => cell.innerHTML = '');
         return board;
     }
 
     const checkWin = (player) => {
         let win = false;
         const checkBoard = getBoard();
+        const check_pScore = player.get_score()
         for(let i = 0; i<=2; i++){
             if(checkBoard[i][0] === player.marker && 
                 checkBoard[i][1] === player.marker && 
@@ -50,14 +63,22 @@ const ticTacToe = (() => {
             checkBoard[2][0] === player.marker)){ //check diagonals
             win = true;
         };
-
-        player.score = win ? player.score++ : player.score;
-        const winGame = player.score === 3 ? true : false;
-        if(winGame){
-            console.log(`${player.name} wins, click start a new game`)
-        }
+        
         if (win){
-        return console.log(player.name);}
+            player.add_score();
+            document.getElementById(`score_${player.name}`).innerHTML = check_pScore;
+            newRound();
+            return console.log(player.name);
+        };
+
+        //player.get_score = win ? player.score++ : player.score;
+        const winGame = check_pScore === 3 ? true : false;
+
+        if(winGame){
+            console.log(`${player.name} wins, click start a new game`);
+            input_names.forEach((input) => input.readOnly = false);
+            game_div.style.display = 'none';
+        };
     };
 
     const getBoard = () => {
@@ -68,8 +89,9 @@ const ticTacToe = (() => {
         if(board[x][y] === 0){
             board[x][y] = player.marker;
             validMove = true;
+            const marker_design = player.marker === 1 ? 'x' : 'o';
+            document.querySelector(`[data-id="${x}${y}"]`).innerHTML = marker_design;
         }else{
-            board[x][y] = board[x][y];
             validMove = false;
         }
         return board;
@@ -95,12 +117,16 @@ const ticTacToe = (() => {
 })();
 
 function createPlayer(name, marker){
-    const score = 0;
-    return { name, marker, score };
+    let score = 0;
+    const get_score = () => score;
+    const add_score = () => { score++; };
+    const reset_score = () => { score = 0; };
+    return { name, marker, score, get_score,  add_score, reset_score };
 };
 
 function startGame(player1name, player2name){
     ticTacToe.newGame(player1name,player2name);
+    input_names.forEach((input) => input.readOnly = true);
 };
 
 function makePlay(position){
