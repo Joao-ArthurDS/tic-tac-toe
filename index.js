@@ -18,12 +18,13 @@ const ticTacToe = (() => {
     let validMove;
 
     const newGame = (p1,p2) => {
+        const hasMSG = document.getElementById('winMsg');
+        if(hasMSG){
+            hasMSG.remove();
+        };
+
         player1 = createPlayer(p1,1);
-        document.getElementById('score_p1').setAttribute('id',`score_${player1.name}`);
-
         player2 = createPlayer(p2,2);
-        document.getElementById('score_p2').setAttribute('id',`score_${player2.name}`);
-
         turn = player1;
         game_div.style.display = 'flex';
         newRound();
@@ -38,7 +39,6 @@ const ticTacToe = (() => {
     const checkWin = (player) => {
         let win = false;
         const checkBoard = getBoard();
-        const check_pScore = player.get_score()
         for(let i = 0; i<=2; i++){
             if(checkBoard[i][0] === player.marker && 
                 checkBoard[i][1] === player.marker && 
@@ -66,18 +66,29 @@ const ticTacToe = (() => {
         
         if (win){
             player.add_score();
-            document.getElementById(`score_${player.name}`).innerHTML = check_pScore;
-            newRound();
-            return console.log(player.name);
+            const score_id = turn === player1 ? 'score_p1' : 'score_p2';
+            document.getElementById(score_id).innerHTML = player.get_score();
+            console.log(player.name);
         };
 
         //player.get_score = win ? player.score++ : player.score;
-        const winGame = check_pScore === 3 ? true : false;
+        const winGame = player.get_score() === 3 ? true : false;
 
         if(winGame){
             console.log(`${player.name} wins, click start a new game`);
             input_names.forEach((input) => input.readOnly = false);
+            const winMessage = document.createElement('p');
+            winMessage.setAttribute('id','winMsg');
+            winMessage.innerHTML = `${player.name} wins, click New Game button to start a new game.`;
+            document.querySelector('body').appendChild(winMessage);
+            
             game_div.style.display = 'none';
+            player1 = null;
+            player2 = null;
+            document.getElementById('score_p1').innerHTML = '0';
+            document.getElementById('score_p2').innerHTML = '0';
+        }else{ 
+            if(win){ newRound() };
         };
     };
 
